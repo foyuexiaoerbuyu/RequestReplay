@@ -1,0 +1,39 @@
+# Java / Maven
+target/
+*.class
+*.jar
+*.war
+!.mvn/wrapper/maven-wrapper.jar
+dependency-reduced-pom.xml
+
+# IDE
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+.settings/
+.project
+.classpath
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+_out.txt
+_err.txt
+
+# 日志与本地配置
+*.log
+logs/
+config.local.json
+
+# OS
+Thumbs.db
+.DS_Store
+
+# 本地备份
+*.bak
+*.bak-*

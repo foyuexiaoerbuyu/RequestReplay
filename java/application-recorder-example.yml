@@ -1,0 +1,11 @@
+request-recorder:
+  enabled: true
+  project-code: order-service
+  project-name: 订单服务
+  jdbc-url: jdbc:mysql://127.0.0.1:3306/request_recorder?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+  username: recorder
+  password: change-me
+  queue-capacity: 5000
+  workers: 1
+  max-body-size: 1048576
+  exclude-paths: [/actuator/**, /favicon.ico]
