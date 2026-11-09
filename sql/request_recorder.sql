@@ -3,7 +3,8 @@ USE request_recorder;
 CREATE TABLE IF NOT EXISTS http_request_project(
  id BIGINT PRIMARY KEY AUTO_INCREMENT, project_code VARCHAR(100) NOT NULL UNIQUE,
  project_name VARCHAR(200) NOT NULL, description VARCHAR(500),
- created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)
+ created_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+ updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)
 ) ENGINE=InnoDB;
 CREATE TABLE IF NOT EXISTS http_request_record(
  id BIGINT PRIMARY KEY AUTO_INCREMENT, project_code VARCHAR(100) NOT NULL, project_name VARCHAR(200),
@@ -23,3 +24,20 @@ CREATE TABLE IF NOT EXISTS http_replay_history(
  response_body LONGTEXT, duration_ms BIGINT, exception_message TEXT,
  KEY idx_project_time(project_code,replay_time), KEY idx_source(source_record_id)
 ) ENGINE=InnoDB;
+
+-- 兼容升级：老库（http_request_project 无 updated_at 列）自动补列，脚本可重复执行
+DROP PROCEDURE IF EXISTS request_recorder_add_updated_at;
+DELIMITER //
+CREATE PROCEDURE request_recorder_add_updated_at()
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns
+    WHERE table_schema = DATABASE() AND table_name = 'http_request_project' AND column_name = 'updated_at'
+  ) THEN
+    ALTER TABLE http_request_project
+      ADD COLUMN updated_at DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3);
+  END IF;
+END //
+DELIMITER ;
+CALL request_recorder_add_updated_at();
+DROP PROCEDURE request_recorder_add_updated_at;

@@ -1,0 +1,81 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.requestrecorder</groupId>
+    <artifactId>request-recorder-parent</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>request-recorder-parent</name>
+    <description>HTTP request recorder starter for Spring Boot 2.x / 3.x</description>
+
+    <modules>
+        <module>request-recorder-core</module>
+        <module>request-recorder-spring-boot-starter</module>
+        <module>request-recorder-spring-boot-2-starter</module>
+        <module>request-recorder-spring-boot-3-starter</module>
+        <module>request-recorder-integration-tests-boot2</module>
+        <module>request-recorder-integration-tests-boot3</module>
+    </modules>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.release>8</maven.compiler.release>
+        <spring-boot-2.version>2.7.18</spring-boot-2.version>
+        <spring-boot-3.version>3.3.0</spring-boot-3.version>
+        <hikaricp.version>4.0.3</hikaricp.version>
+        <mysql.version>8.3.0</mysql.version>
+        <jackson.version>2.13.5</jackson.version>
+        <slf4j.version>1.7.36</slf4j.version>
+        <junit.version>5.10.2</junit.version>
+        <h2.version>2.1.214</h2.version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.requestrecorder</groupId>
+                <artifactId>request-recorder-core</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.requestrecorder</groupId>
+                <artifactId>request-recorder-spring-boot-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.requestrecorder</groupId>
+                <artifactId>request-recorder-spring-boot-2-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.requestrecorder</groupId>
+                <artifactId>request-recorder-spring-boot-3-starter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-compiler-plugin</artifactId>
+                    <version>3.13.0</version>
+                    <configuration>
+                        <encoding>UTF-8</encoding>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>3.2.5</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
