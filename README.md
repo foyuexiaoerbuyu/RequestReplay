@@ -2,26 +2,30 @@
 
 Java 请求采集组件 + Python Tkinter 请求回放桌面端。
 
+```
+![alt文字](./python/ScreenShot_2026-11-09_163042_653.png)
+```
+
 ## 目录
 
-| 目录 | 说明 |
-| --- | --- |
-| `request-recorder/` | **重构后的采集组件**：多模块 Maven Starter（core + Boot 2/3 适配 + 集成测试 + 中文文档），推荐使用 |
-| `java/` | 早期单工程形态的采集组件与 Boot 2 / Boot 3 演示工程（保留作参考） |
-| `python/` | Tkinter 回放客户端：请求列表、请求/响应详情、编辑并回放、回放历史 |
-| `sql/` | MySQL 8.0 建表脚本（`request_recorder.sql`）；旧数据回填（`backfill_project_from_records.sql`） |
+| 目录                  | 说明                                                                                |
+| ------------------- | --------------------------------------------------------------------------------- |
+| `request-recorder/` | **重构后的采集组件**：多模块 Maven Starter（core + Boot 2/3 适配 + 集成测试 + 中文文档），推荐使用             |
+| `java/`             | 早期单工程形态的采集组件与 Boot 2 / Boot 3 演示工程（保留作参考）                                         |
+| `python/`           | Tkinter 回放客户端：请求列表、请求/响应详情、编辑并回放、回放历史                                             |
+| `sql/`              | MySQL 8.0 建表脚本（`request_recorder.sql`）；旧数据回填（`backfill_project_from_records.sql`） |
 
 ## request-recorder（推荐）
 
 标准 Maven Starter 形态，业务工程引入一个依赖 + 一段 yml 即可自动采集：
 
-| 模块 | 说明 |
-| --- | --- |
-| `request-recorder-core` | 纯 Java 核心：配置、模型、异步队列、独立连接池、脱敏、仓储、采集判定（无 Spring / Servlet 依赖） |
-| `request-recorder-spring-boot-starter` | 版本无关公共自动装配 |
-| `request-recorder-spring-boot-2-starter` | Boot 2 适配（`javax.servlet` + `spring.factories`） |
-| `request-recorder-spring-boot-3-starter` | Boot 3 适配（`jakarta.servlet` + `AutoConfiguration.imports`） |
-| `request-recorder-integration-tests-boot2` / `-boot3` | 端到端测试（Boot 2.7.18 / Boot 3.3.0），不发布 |
+| 模块                                                    | 说明                                                           |
+| ----------------------------------------------------- | ------------------------------------------------------------ |
+| `request-recorder-core`                               | 纯 Java 核心：配置、模型、异步队列、独立连接池、脱敏、仓储、采集判定（无 Spring / Servlet 依赖） |
+| `request-recorder-spring-boot-starter`                | 版本无关公共自动装配                                                   |
+| `request-recorder-spring-boot-2-starter`              | Boot 2 适配（`javax.servlet` + `spring.factories`）              |
+| `request-recorder-spring-boot-3-starter`              | Boot 3 适配（`jakarta.servlet` + `AutoConfiguration.imports`）   |
+| `request-recorder-integration-tests-boot2` / `-boot3` | 端到端测试（Boot 2.7.18 / Boot 3.3.0），不发布                          |
 
 ```xml
 <dependency>
@@ -62,12 +66,12 @@ Java 8+ 运行 Boot 2；Java 17+ 运行 Boot 3。MySQL 账号建议仅授予独�
 
 ## 校验
 
-| 项 | 命令 / 说明 |
-| --- | --- |
-| 全量构建与测试 | `cd request-recorder && mvn clean install` —— core 19 例 + boot2 9 例全部通过，boot3 10 例中 1 例 MySQL 冒烟默认跳过 |
-| GUI 兼容性校验 | `python request-recorder/tools/verify_gui_compat.py --repository request-recorder/request-recorder-core/src/main/java/com/requestrecorder/core/database/RecorderRepository.java`（只读，读 `%APPDATA%/RequestReplay/config.json`） |
-| 真实 MySQL 落库冒烟 | `mvn -pl request-recorder-integration-tests-boot3 test -Drequest-recorder.it.mysql=true`，连接参数用环境变量 `RR_IT_MYSQL_USER` / `RR_IT_MYSQL_PASSWORD` / `RR_IT_MYSQL_DATABASE`；默认跳过，使用一次性 project-code 并自清数据 |
-| 旧数据回填项目 | `mysql -uroot -p request_recorder < sql/backfill_project_from_records.sql`（幂等，旧版组件未登记项目时执行） |
+| 项             | 命令 / 说明                                                                                                                                                                                                                      |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 全量构建与测试       | `cd request-recorder && mvn clean install` —— core 19 例 + boot2 9 例全部通过，boot3 10 例中 1 例 MySQL 冒烟默认跳过                                                                                                                         |
+| GUI 兼容性校验     | `python request-recorder/tools/verify_gui_compat.py --repository request-recorder/request-recorder-core/src/main/java/com/requestrecorder/core/database/RecorderRepository.java`（只读，读 `%APPDATA%/RequestReplay/config.json`） |
+| 真实 MySQL 落库冒烟 | `mvn -pl request-recorder-integration-tests-boot3 test -Drequest-recorder.it.mysql=true`，连接参数用环境变量 `RR_IT_MYSQL_USER` / `RR_IT_MYSQL_PASSWORD` / `RR_IT_MYSQL_DATABASE`；默认跳过，使用一次性 project-code 并自清数据                        |
+| 旧数据回填项目       | `mysql -uroot -p request_recorder < sql/backfill_project_from_records.sql`（幂等，旧版组件未登记项目时执行）                                                                                                                                  |
 
 ## 注意
 
