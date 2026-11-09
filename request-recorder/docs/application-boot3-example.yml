@@ -1,0 +1,116 @@
+# ===========================================================================
+# RequestRecorder 采集组件配置示例 —— Spring Boot 3.x
+#
+# 适用依赖：
+#   <dependency>
+#       <groupId>com.requestrecorder</groupId>
+#       <artifactId>request-recorder-spring-boot-3-starter</artifactId>
+#       <version>1.0.0</version>
+#   </dependency>
+#
+# 业务项目无需编写任何 Filter / Interceptor / @Bean，配置本文件即可自动采集。
+# 说明：Boot 3 需 JDK 17+，且与 Boot 2 适配器不能同时引入（javax/jakarta 命名空间不同）。
+# 数据库要求：MySQL 8.0，已执行 sql/request_recorder.sql（或用自动建表）。
+# ===========================================================================
+
+server:
+  port: 8080
+
+spring:
+  application:
+    name: order-service
+
+request-recorder:
+  # 总开关，false 时组件完全不装配（也可用 request-recorder.enabled=false 关闭）
+  enabled: true
+
+  # 项目编码：多项目写入同一库时的隔离键，必填
+  project-code: order-service
+  # 项目名称：缺省回落为 project-code
+  project-name: 订单服务
+  description: 订单服务测试环境请求采集
+
+  # 独立采集库连接（与业务 DataSource 无关，组件自建连接池）
+  database:
+    jdbc-url: jdbc:mysql://127.0.0.1:3306/request_recorder?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    username: recorder
+    password: change-me
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    # 采集连接池大小，建议 2~5，避免占用过多数据库连接
+    pool-size: 3
+    connection-timeout-ms: 3000
+    validation-timeout-ms: 2000
+
+  # 启动时表不存在则自动建表；生产建议关闭，改为手工执行 SQL 脚本
+  auto-init-schema: false
+  # 配置非法（缺 project-code / jdbc-url 等）时是否阻断启动；默认 false：打印错误并禁用采集
+  fail-fast: false
+
+  # 采集范围
+  # 单请求/响应正文上限（字节），超出截断并标记 truncated
+  max-body-size: 1048576
+  # 不采集的路径（Ant 风格，支持 ** 与 ?），下列为默认值
+  exclude-paths:
+    - /actuator/**
+    - /favicon.ico
+    - /error
+    - /request-recorder/**
+  record-static-resources: false
+  skip-web-socket: true
+  skip-sse: true
+  skip-file-download: true
+  # multipart 请求默认只记录元数据，置 true 会尝试解析头字段
+  record-multipart: false
+
+  # 异步写入（不阻塞业务线程）
+  async:
+    enabled: true
+    # 有界队列容量，满时按 drop-when-full 丢弃并计入丢弃统计
+    queue-capacity: 5000
+    workers: 2
+    drop-when-full: true
+    max-retries: 1
+    retry-backoff-ms: 200
+    # 应用关闭时最长排空时间
+    shutdown-timeout-ms: 3000
+
+  # 敏感数据脱敏（落库前替换为 ******）
+  masking:
+    enabled: true
+    headers:
+      - authorization
+      - cookie
+      - set-cookie
+      - x-api-key
+      - proxy-authorization
+    keys:
+      - password
+      - passwd
+      - pwd
+      - token
+      - secret
+      - access_token
+      - refresh_token
+      - id_card
+      - idcard
+      - mobile
+      - phone
+      - bank_card
+      - cvv
+
+  # 请求回放防循环：Python GUI 回放时会带该头，Java 侧跳过不再采集
+  replay:
+    skip-enabled: true
+    header-name: X-Request-Replay
+    header-value: "true"
+
+# ---------------------------------------------------------------------------
+# 最小配置（只保留必填项即可工作）：
+#
+# request-recorder:
+#   project-code: order-service
+#   database:
+#     jdbc-url: jdbc:mysql://127.0.0.1:3306/request_recorder?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
+#     username: recorder
+#     password: change-me
+# ---------------------------------------------------------------------------

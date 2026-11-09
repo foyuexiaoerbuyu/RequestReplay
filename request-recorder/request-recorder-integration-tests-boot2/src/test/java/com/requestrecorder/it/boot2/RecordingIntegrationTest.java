@@ -123,13 +123,20 @@ class RecordingIntegrationTest {
     }
 
     @Test
-    @DisplayName("带回放标记头的请求不产生采集记录")
+    @DisplayName("带回放标记头的请求不产生采集记录，回放后记录数不增加")
     void replayRequestIsNotRecorded() throws Exception {
+        // 先产生一条正常采集记录作为回放前基线
+        rest.getForEntity("/api/echo?name=before", String.class);
+        drain();
+        int baseline = countByUri("/api/echo");
+        assertEquals(1, baseline, "回放前应有 1 条基线记录");
+
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Request-Replay", "true");
-        rest.exchange("/api/echo", HttpMethod.GET, new HttpEntity<Void>(headers), String.class);
+        rest.exchange("/api/echo?name=replay", HttpMethod.GET, new HttpEntity<Void>(headers), String.class);
         drain();
-        assertEquals(0, countByUri("/api/echo"));
+
+        assertEquals(baseline, countByUri("/api/echo"), "回放请求不应新增采集记录");
     }
 
     @Test

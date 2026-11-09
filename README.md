@@ -9,7 +9,7 @@ Java 请求采集组件 + Python Tkinter 请求回放桌面端。
 | `request-recorder/` | **重构后的采集组件**：多模块 Maven Starter（core + Boot 2/3 适配 + 集成测试 + 中文文档），推荐使用 |
 | `java/` | 早期单工程形态的采集组件与 Boot 2 / Boot 3 演示工程（保留作参考） |
 | `python/` | Tkinter 回放客户端：请求列表、请求/响应详情、编辑并回放、回放历史 |
-| `sql/` | MySQL 8.0 建表脚本（`request_recorder.sql`） |
+| `sql/` | MySQL 8.0 建表脚本（`request_recorder.sql`）；旧数据回填（`backfill_project_from_records.sql`） |
 
 ## request-recorder（推荐）
 
@@ -59,6 +59,15 @@ request-recorder:
 4. EXE：`pyinstaller --noconfirm --clean --onefile --windowed --name RequestReplay main.py`。
 
 Java 8+ 运行 Boot 2；Java 17+ 运行 Boot 3。MySQL 账号建议仅授予独立库权限。
+
+## 校验
+
+| 项 | 命令 / 说明 |
+| --- | --- |
+| 全量构建与测试 | `cd request-recorder && mvn clean install` —— core 19 例 + boot2 9 例全部通过，boot3 10 例中 1 例 MySQL 冒烟默认跳过 |
+| GUI 兼容性校验 | `python request-recorder/tools/verify_gui_compat.py --repository request-recorder/request-recorder-core/src/main/java/com/requestrecorder/core/database/RecorderRepository.java`（只读，读 `%APPDATA%/RequestReplay/config.json`） |
+| 真实 MySQL 落库冒烟 | `mvn -pl request-recorder-integration-tests-boot3 test -Drequest-recorder.it.mysql=true`，连接参数用环境变量 `RR_IT_MYSQL_USER` / `RR_IT_MYSQL_PASSWORD` / `RR_IT_MYSQL_DATABASE`；默认跳过，使用一次性 project-code 并自清数据 |
+| 旧数据回填项目 | `mysql -uroot -p request_recorder < sql/backfill_project_from_records.sql`（幂等，旧版组件未登记项目时执行） |
 
 ## 注意
 

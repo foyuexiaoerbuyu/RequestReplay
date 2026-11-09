@@ -66,6 +66,25 @@ mvn clean install
 
 Boot 3 模块需 JDK 17 编译；core 与 Boot 2 模块字节码为 Java 8。
 
+## 校验工具
+
+| 工具 | 用途 |
+| --- | --- |
+| `tools/verify_gui_compat.py` | 只读校验采集库与 Python GUI 的字段/查询兼容性（读 `%APPDATA%/RequestReplay/config.json`） |
+| `MySqlSmokeTest`（boot3 集成测试） | 真实 MySQL 8.0 落库冒烟测试，默认跳过，需显式开启 |
+
+```bash
+# 1. GUI 兼容性校验（只读，可重复执行）
+cd tools
+python verify_gui_compat.py --repository ../request-recorder-core/src/main/java/com/requestrecorder/core/database/RecorderRepository.java
+
+# 2. 真实 MySQL 落库冒烟（连接参数用环境变量，避免命令行转义）
+export RR_IT_MYSQL_USER=root RR_IT_MYSQL_PASSWORD=你的密码 RR_IT_MYSQL_DATABASE=request_recorder
+mvn -pl request-recorder-integration-tests-boot3 test -Drequest-recorder.it.mysql=true
+```
+
+冒烟测试使用一次性 `project-code`，结束前只清理自身写入的数据，不影响库内既有记录。
+
 ## 设计要点
 
 - **独立数据源**：采集库连接池由组件自建，不与业务 `DataSource` / 事务 / MyBatis 共享；未引入 HikariCP 时自动回退 JDBC 直连。

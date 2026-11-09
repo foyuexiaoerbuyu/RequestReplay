@@ -51,6 +51,12 @@
             <version>${h2.version}</version>
             <scope>test</scope>
         </dependency>
+        <!-- 真实 MySQL 冒烟测试（MySqlSmokeTest，默认跳过）所需驱动 -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>
