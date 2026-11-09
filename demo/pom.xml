@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.example.demo</groupId>
+    <artifactId>request-recorder-demo</artifactId>
+    <version>1.0.0</version>
+    <packaging>pom</packaging>
+    <name>request-recorder-demo</name>
+    <description>RequestRecorder 最小端到端演示工程（Boot 2 / Boot 3 各一份）</description>
+
+    <modules>
+        <module>demo-boot2</module>
+        <module>demo-boot3</module>
+    </modules>
+</project>

@@ -1,0 +1,27 @@
+server:
+  port: 8091
+
+spring:
+  application:
+    name: demo-boot2
+
+# ===== RequestRecorder 采集配置：接入只需这一段 =====
+request-recorder:
+  enabled: true
+  project-code: demo-boot2
+  project-name: RequestRecorder 最小演示(Boot 2.7 + JDK 8)
+  description: 端到端演示工程
+  auto-init-schema: true          # 首次运行自动建表；表已存在时无副作用
+  max-body-size: 262144           # 256KB，超过即截断并标记
+  exclude-paths: /api/skip/**     # 排除路径不采集
+  record-static-resources: false
+  database:
+    jdbc-url: jdbc:mysql://127.0.0.1:3306/request_recorder?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai&useSSL=false&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: ${DEMO_DB_USER:root}
+    password: ${DEMO_DB_PASSWORD:root}
+    pool-size: 3
+  async:
+    enabled: true
+    workers: 2
+    queue-capacity: 500

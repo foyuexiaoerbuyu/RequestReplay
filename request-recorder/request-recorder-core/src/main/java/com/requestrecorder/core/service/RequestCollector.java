@@ -88,7 +88,7 @@ public final class RequestCollector {
 
         data.setResponseStatus(response.getStatus());
         data.setResponseHeaders(SensitiveMasker.headersToJson(response.getHeaders(), settings));
-        Charset responseCharset = ContentTypes.resolveCharset(response.getContentType(),
+        Charset responseCharset = ContentTypes.resolveResponseCharset(response.getContentType(),
                 response.getCharacterEncoding(), requestCharset);
         data.setResponseBody(renderBody(response.getBody(), response.getContentType(), responseCharset,
                 responseBodyPlaceholder(response)));
